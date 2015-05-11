@@ -10,6 +10,7 @@ public class Monster
     // instance variables - replace the example below with your own
     private double attackDamage;
     private double monsterHealth;
+    private int monsterId;
     private int monsterLevel;
     private ArrayList<String> md = new ArrayList<>();
     private String monsterName;
@@ -42,6 +43,16 @@ public class Monster
         this.attackDamage = 0 + monsterLevel * AttackMultiplier;
         this.monsterHealth = 10 + monsterLevel * HealthMultiplier;
     }
+    
+    public void setId(int mId)
+    {
+		monsterId = mId;
+	}
+	
+	public int getId()
+	{
+		return monsterId;
+	}
     
     public String getAsString()
     {

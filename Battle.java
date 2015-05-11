@@ -7,170 +7,162 @@ import java.util.*;
  */
 public class Battle
 {
-    private Hero hero;
-    private Monster monster;
+    private Hero[] heroes = new Hero[5];
+    private String[] heroCommands;
+    private Monster[] monsters = new Monster[5];
+    private String[] monsterCommands;
     private int turnNumber;
-    private GUI battleGUI;
-    public Battle(Hero hero, Monster monster)
+    private boolean gameState;
+    
+    public Battle(Hero leadHero, Monster leadMonster)
     {
-        //First, we must initilize the Battle.
-        battleGUI = new GUI();
-        //battleUI.setupBattleMode();
-        battleGUI.printLn("You are under attack by a " + monster.getName());
-        turnNumber = 1;
-        turn();
+        turnNumber = 0;
+        addHero(leadHero);
+        addMonster(leadMonster);
+        gameState = true;
     }
-    private int getTurnNumber()
+    
+    public String strike(int a,int b)
+    {
+		String returnString = "";
+		try {
+			if (getHero(a) != null)
+			{
+				Hero attacker = getHero(a);
+				defender = getMonster(b);
+				defender.recieveStrike(attacker.getDamage());
+				returnString = "> " + attacker.getName() + " strikes " + defender.getName() + " for " + attacker.getDamage();
+			} else 
+			{
+				Monster attacker = getMonster(a);
+				Hero defender = getHero(b);
+				defender.recieveStrike(attacker.getDamage());
+				returnString = "< " + attacker.getName() + " strikes " + defender.getName() + " for " + attacker.getDamage();
+			}
+		} catch (NullPointerException e)
+		{
+			returnString = "ERROR";
+		}
+		return returnString;
+	}
+    
+    public void turn()
+    {
+		//this will initiate all the commands stored and run them based on character speed.
+	}
+    
+    public boolean isOver()
+    {
+		return gameState;
+	}
+    
+    private void registerCommandHero(int heroId, String command)
+    {
+		int i = 0;
+		for (Hero tempHero : heroes)
+		{
+			if (tempHero.getId() == heroId)
+			{
+				heroCommands[i] = command;
+				break;
+			}
+			i++;
+		}
+	}
+    
+    private void removeMonster(int groupIndex)
+    {
+		monsters[groupIndex] = null;
+	}
+	
+	private void removeHero(int groupIndex)
+	{
+		heroes[groupIndex] = null;
+	}
+    
+    private void addHero(Hero hero)
+    {
+		int i = 0;
+		for (Hero tempHero : heroes)
+		{
+			if (tempHero == null)
+			{
+				heroes[i] = hero;
+				break;
+			}
+			i++;
+		}
+	}
+	
+	private void addMonster(Monster monster)
+	{
+		int i = 0;
+		for (Monster tempMonster : monsters)
+		{
+			if (tempMonster == null)
+			{
+				monsters[i] = tempMonster;
+				break;
+			}
+			i++;
+		}
+	}
+	
+	private Monster getMonter(int monsterID)
+	{
+		for (Monster tempMonster : monsters)
+		{
+			if (tempMonster.getId() == monsterID)
+			{
+				return tempMonster;
+			}
+		}
+		return null;
+	}
+	
+	private Hero getHero(int heroID)
+	{
+		for (Hero tempHero : heroes)
+		{
+			if (tempHero.getId() == heroID)
+			{
+				return tempHero;
+			}
+		}
+		return null;
+	} 
+	
+    public String getAlliedPane()
+    {
+		int i = 0;
+		String returnString = "";
+		for (Hero tempHero : heroes)
+		{
+			if (tempHero != null)
+			{
+				returnString = returnString + heroes[i].getId() + " " + heroes[i].getName() + "/n";
+			}
+			i++;
+		}
+		
+		return returnString;
+	}
+    
+    public String getEnemyPane()
+    {
+		int i = 0;
+		String returnString = "";
+		for (Monster tempMonster : monsters)
+		{
+			returnString = returnString + monsters[i].getId() + " " + monsters[i].getName() + "/n";
+		}
+		return returnString;
+	}
+	
+    public int getTurnNumber()
     {
         return turnNumber;
     }
     
-    
-    public String turn()
-    {
-        int returnInt = 0;
-        battleGUI.printLn("------------ TURN " + turnNumber + " ------------");
-        battleGUI.printLn("What do you do?");
-        battleGUI.printLn("[1] Attack            [2] Item");
-        battleGUI.printLn("[3] Run               [4] Magika");
-        battleGUI.printLn("Type [1-4] Below:");
-        int choice = 0;
-        if (choice == 1)
-        {
-            returnInt = Attack(1);
-            if (returnInt == 1)
-            {
-                //The Attack Has Hit But Not Slain
-            }
-            if (returnInt == 2)
-            {
-                //The Attack Has Hit And Slain
-            }
-        } else if (choice == 2)
-        {
-            returnInt = Item();
-            if (returnInt == 1)
-            {
-                //The Item Has Been Used
-            }
-            if (returnInt == 2)
-            {
-                //You Cannot Use That Item
-            }
-            if (returnInt == 3)
-            {
-                //You don't have an item in that slot.
-            }
-        } else if (choice == 3)
-        {
-            returnInt = Run();
-            if (returnInt == 1)
-            {
-                //You have managed to run away.
-            }
-            if (returnInt == 2)
-            {
-                //You have failed to escape
-            }
-            if (returnInt == 3)
-            {
-                //You cannot back down from this fight
-            }
-        } else if (choice == 4)
-        {
-            returnInt = Magika();
-            if (returnInt == 1)
-            {
-                //You have used the Magick
-            }
-            if (returnInt == 2)
-            {
-                //You do not have a Magick in that Slot.
-            }
-            if (returnInt == 3)
-            {
-                //You cannot use that Magick
-            }
-        }
-        String errorMessage = error(returnInt);
-        if (errorMessage != null)
-        {
-            battleGUI.printLn(errorMessage);
-        } else
-        {
-        }
-        return null;
-    }
-    
-    //ATTACK, ITEM, RUN, MAGIKA
-    
-    public int Attack(int type)
-    {
-        //ATTACK TYPES: 1 = HERO -> MONSTER, 2 = MONSTER -> HERO
-        int returnInt = 404;
-        if (type == 1)
-        {
-            returnInt = monster.takeDamage(hero.getDamage());
-            if (returnInt == 1)
-            {
-                //HIT NOT SLAIN
-                battleGUI.printLn("[->] YOU DEAL " + hero.getDamage() + " TO " + monster.getName()); 
-            }
-            if (returnInt == 2)
-            {
-                //SLAIN
-                battleGUI.printLn("[++] YOU HAVE SLAIN " + monster.getName());
-            }
-        } else if (type == 2)
-        {
-            returnInt = hero.takeDamage(monster.getDamage());
-            if (returnInt == 1)
-            {
-                //HIT NOT SLAIN
-                battleGUI.printLn("[<-] YOU RECIEVE " + monster.getDamage() + " FROM " + monster.getName());
-            }
-            if (returnInt == 2)
-            {
-                //SLAIN
-                battleGUI.printLn("[--] YOU HAVE BEEN SLAIN BY " + monster.getName());
-            }
-        }
-        return returnInt;
-    }
-    
-    public int Item()
-    {
-        return 505;
-    }
-    public int Run()
-    {
-        return 505;
-    }
-    public int Magika()
-    {
-        return 404;
-    }
-    
-    public String error(int returnInt)
-    {
-        String returnString = "";
-        if (returnInt > 100)
-        {
-            if (returnInt == 404)
-            {
-                returnString = "[ERROR CODE: 404] Invalid parameter entered.";
-            }
-            if (returnInt == 505)
-            {
-                returnString = "[ERROR CODE: 505] That feature is still under work.";
-            } else  
-            {
-                returnString = "[ERROR CODE: ???] We don't know what went wrong, we're working on it.     :(";
-            }
-            return returnString;
-        }
-        return null;
-    }
-    }
-
+   }
 

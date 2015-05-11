@@ -11,6 +11,7 @@ public class Hero
     // instance variables - replace the example below with your own
     private String heroName;
     private double heroHealth;
+    private int heroId;
     private int experiencePoints;
     private int level;
     private double attackDamage;
@@ -29,6 +30,11 @@ public class Hero
         attackDamage = 2;
     }
     
+    public void setId(int id)
+    {
+		 heroId = id;
+	}
+	
     public String getName()
     {
         return heroName;
@@ -41,6 +47,11 @@ public class Hero
             inventory.add(item);
         }
     }
+    
+    public int getId()
+    {
+		return heroId;
+	}
     
     public void removeInventory(int invId)
     {

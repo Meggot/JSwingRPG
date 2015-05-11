@@ -33,11 +33,13 @@ public class GameSession extends GUI
     private viewInventory inventoryListener = new viewInventory();
     private viewSkills viewSkillsListener = new viewSkills();
     private lootContainer commandLootListener = new lootContainer();
+    private battleInput battleInputListener = new battleInput();
     
     //static variables
     private StaticVariables idVariables = new StaticVariables();
     //objects
     private objContainer tempContainer;
+    private Battle activeBattle;
     
     public GameSession()
     {
@@ -48,6 +50,21 @@ public class GameSession extends GUI
         getInventoryButton().addActionListener(inventoryListener);
         getSkillsButton().addActionListener(viewSkillsListener);
     }
+    
+    public void battleTurn()
+    {
+		String allyInfo = activeBattle.getAlliedPane();
+		String enemyInfo = activeBattle.getEnemyPane();
+		printLocationPanels(allyInfo, enemyInfo);
+		if (activeBattle.isOver())
+		{
+			
+			//gameOver
+		}else {
+		print("<> You have initiated a battle!");
+		printLn(activeBattle.getTurnNumber() + " \n" + availableCommands);
+	}
+	}
     
     public void initiateBattle(String objId)
     {
@@ -66,8 +83,12 @@ public class GameSession extends GUI
             if (objTemp.getType() == 2)
             {
                 objMonster Monster = (objMonster)objTemp;
-                Battle newBattle = new Battle(game.getHero(), Monster.getMonster());
+                activeBattle = new Battle(game.getHero(), Monster.getMonster());
+                availableCommands = "strike <target>, defend <target>, use <inventory index>, cast <spell>";
                 printLn("< You have initiated a battle!");
+                getCommandButton().removeActionListener(commandInputListener);
+                getCommandButton().addActionListener(battleInputListener);
+                battleTurn();
             } else
             {
                 printLn("~ You cannot fight that..");
@@ -224,6 +245,7 @@ public class GameSession extends GUI
         cottage.addLocation("garden", 0);
         Location garden = cottage.getLocation("garden");
         objMonster monster = new objMonster("Berkly");
+        monster.getMonster().setId(idVariables.nextMonsterID());
         garden.addObject(monster);
         hall.setDesc("A fireplace crackles ambiently on the east wall, " +
             " that is adorned sporadically with many shelves and a circular window" + 
@@ -321,7 +343,31 @@ public class GameSession extends GUI
             return null;
         }
     }
-
+	private class battleInput implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e) throws NullPointerException
+		{
+			CommandParsee cmdInput = new CommandParsee(getCommandText());
+			printLn("$ " + cmdInput.getCommand());
+			if (cmdInput.getBlock(0).equals("strike"))
+			{
+				
+			} else if(cmdInput.getBlock(0).equals("defend"))
+			{
+				
+			} else if(cmdInput.getBlock(0).equals("use"))
+			{
+				
+			} else if(cmdInput.getBlock(0).equals("cast"))
+			{
+				
+			} else 
+			{
+				//bad command
+			}
+		}
+			
+		}
     private class commandInput implements ActionListener
     {
         public void actionPerformed(ActionEvent e) throws NullPointerException
@@ -393,6 +439,7 @@ public class GameSession extends GUI
                     "\nsystem through your useful and limitless cmd line! Type" +
                     "\n'travel cottage' to travel to your home");
             game = new Game(getCommandText());
+            game.getHero().setId(idVariables.nextHeroID());
             setDefault();
         }
     }
@@ -417,19 +464,24 @@ public class GameSession extends GUI
             if (cmdInput.getBlock(0).equals("lootall"))
             {
                 int i = 0;
-                while (i <= tempContainer.itemAmount())
+                int itemAmt = tempContainer.itemAmount();
+                printLn("< You take " + itemAmt + " items from the " + tempContainer.getName());
+                while (i < itemAmt)
                 {
-                    
-                    game.getHero().addItem(tempContainer.lootItem(i));
+                    Item item = tempContainer.lootItem(0);
+                    printLn(" < " + item.getName());
+                    game.getHero().addItem(item);
                     i++;
                 }
+                turn();
+                return;
             } else if (cmdInput.getBlock(0).equals("loot"))
             {
                 try {
                     int itemId = Integer.parseInt(cmdInput.getBlock(1));
                     Item item = tempContainer.lootItem(itemId);
                     game.getHero().addItem(item);
-                    print("< You take '" + item.getName() + "'" +//and quantity
+                    printLn("< You take '" + item.getName() + "'" +//and quantity
                     "\n" +
                     "\n>" + tempContainer.getName() + "" +
                     "\n" + tempContainer.getContentsDisplay() +
@@ -446,7 +498,7 @@ public class GameSession extends GUI
                 }
             } else if (cmdInput.getBlock(0).equals("close"))
             {
-                print("> You close the " + tempContainer.getName());
+                printLn("> You close the " + tempContainer.getName());
             } else if (cmdInput.getBlock(0).equals("put"))
             {
                 try {
@@ -454,7 +506,7 @@ public class GameSession extends GUI
                     Item inventoryItem = game.getHero().getItem(inventoryIndex);
                     game.getHero().removeInventory(inventoryIndex);
                     tempContainer.addItem(inventoryItem);
-                    print("> You put '" + inventoryItem.getName() + "' into the " + tempContainer.getName() +//and quantity
+                    printLn("> You put '" + inventoryItem.getName() + "' into the " + tempContainer.getName() +//and quantity
                     "\n" +
                     "\n>" + tempContainer.getName() + "" +
                     "\n" + tempContainer.getContentsDisplay() +
