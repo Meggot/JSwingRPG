@@ -1,17 +1,25 @@
 
 public class StaticVariables
 {
-    private static int objID;
-    private static int itemID;
-    private static int heroID;
-    private static int monsterID;
+    private static int objID = 0;
+    private static int itemID = 0;
+    private static int heroID = 0;
+    private static int monsterID = 0;
+    private StaticVariables instance;
 
-    public StaticVariables()
+    private StaticVariables()
     {
-        this.objID = 0;
-        this.itemID = 0;
-        this.heroID = 0;
-        this.monsterID = 0;
+    }
+    
+    private StaticVariables getInstance()
+    {
+        if (instance != null)
+        {
+            return instance;
+        } else {
+            instance = new StaticVariables();
+            return instance;
+        }
     }
     
     public int nextObjID()
