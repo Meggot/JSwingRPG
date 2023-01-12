@@ -23,7 +23,7 @@ public class Weapon extends Item
     {
 		
 	}
-    public void getAttack()
+    public double getAttack()
     {
 		return attackDamage;
 	}

@@ -5,13 +5,13 @@ public class StaticVariables
     private static int itemID = 0;
     private static int heroID = 0;
     private static int monsterID = 0;
-    private StaticVariables instance;
+    private static StaticVariables instance;
 
     private StaticVariables()
     {
     }
     
-    private StaticVariables getInstance()
+    public static StaticVariables getInstance()
     {
         if (instance != null)
         {

@@ -29,14 +29,14 @@ public class Battle
 			if (getHero(a) != null)
 			{
 				Hero attacker = getHero(a);
-				defender = getMonster(b);
-				defender.recieveStrike(attacker.getDamage());
+				Monster defender = getMonster(b);
+				defender.takeDamage(attacker.getDamage());
 				returnString = "> " + attacker.getName() + " strikes " + defender.getName() + " for " + attacker.getDamage();
 			} else 
 			{
 				Monster attacker = getMonster(a);
 				Hero defender = getHero(b);
-				defender.recieveStrike(attacker.getDamage());
+				defender.takeDamage(attacker.getDamage());
 				returnString = "< " + attacker.getName() + " strikes " + defender.getName() + " for " + attacker.getDamage();
 			}
 		} catch (NullPointerException e)
@@ -108,7 +108,7 @@ public class Battle
 		}
 	}
 	
-	private Monster getMonter(int monsterID)
+	private Monster getMonster(int monsterID)
 	{
 		for (Monster tempMonster : monsters)
 		{

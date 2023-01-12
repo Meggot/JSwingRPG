@@ -36,7 +36,7 @@ public class GameSession extends GUI
     private battleInput battleInputListener = new battleInput();
     
     //static variables
-    private StaticVariables idVariables = new StaticVariables();
+    private static StaticVariables idVariables = StaticVariables.getInstance();
     //objects
     private objContainer tempContainer;
     private Battle activeBattle;
